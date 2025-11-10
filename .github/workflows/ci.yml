@@ -1,0 +1,36 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  style-check:
+    name: Verificação de estilo
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v3
+      - name: Instalar dependências
+        run: pip install flake8
+      - name: Executar Flake8
+        run: flake8 .
+
+  tests-and-coverage:
+    name: Testes e cobertura
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v3
+      - name: Configurar Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
+      - name: Instalar dependências
+        run: |
+          pip install -r requirements.txt
+          pip install pytest pytest-cov
+      - name: Executar testes com cobertura
+        run: pytest --cov=. --maxfail=1 --disable-warnings -q
