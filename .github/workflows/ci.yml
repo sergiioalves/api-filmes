@@ -1,36 +1,67 @@
-name: CI
+name: CI - Verificação de Estilo e Testes
 
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main
   pull_request:
-    branches: [ main ]
+    branches:
+      - main
 
 jobs:
   style-check:
-    name: Verificação de estilo
+    name: Verificação de estilo de código (flake8)
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout do código
+      - name: Checkout do repositório
         uses: actions/checkout@v3
-      - name: Instalar dependências
-        run: pip install flake8
-      - name: Executar Flake8
-        run: flake8 .
 
-  tests-and-coverage:
-    name: Testes e cobertura
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout do código
-        uses: actions/checkout@v3
       - name: Configurar Python
         uses: actions/setup-python@v4
         with:
-          python-version: "3.10"
+          python-version: '3.10'
+
       - name: Instalar dependências
         run: |
+          python -m pip install --upgrade pip
+          pip install flake8
+
+      - name: Executar flake8
+        run: |
+          # ignora a pasta venv e limita linhas a 79 colunas
+          flake8 . --exclude=venv --max-line-length=79
+
+  test-coverage:
+    name: Testes e cobertura mínima de 90%
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout do repositório
+        uses: actions/checkout@v3
+
+      - name: Configurar Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Instalar dependências
+        run: |
+          python -m pip install --upgrade pip
           pip install -r requirements.txt
           pip install pytest pytest-cov
+
       - name: Executar testes com cobertura
-        run: pytest --cov=. --maxfail=1 --disable-warnings -q
+        run: |
+          export PYTHONPATH=$(pwd)
+          pytest --cov=. --maxfail=1 --disable-warnings -q
+
+      - name: Verificar cobertura mínima de 90%
+        run: |
+          export PYTHONPATH=$(pwd)
+          coverage=$(pytest --cov=. --disable-warnings -q | grep -oP '\d+(?=%)')
+          echo "Cobertura atual: ${coverage}%"
+          if [ "$coverage" -lt 90 ]; then
+            echo "Cobertura de testes abaixo de 90%"
+            exit 1
+          else
+            echo "Cobertura de testes acima de 90%"
+          fi
