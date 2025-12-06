@@ -136,7 +136,6 @@ git commit -S -m "feat(api): adiciona rota DELETE /filmes/<id>"
 ![Docker Image Size](https://badgen.net/docker/size/sergioalves1234/api-filmes/latest)
 
 
-
 ## 📚 Autor
 
 **Sérgio Alves**  
