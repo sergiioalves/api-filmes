@@ -2,16 +2,19 @@ name: Build & Push Docker image
 
 on:
   push:
-    branches: [ "main" ] 
+    branches:
+      - main
+  workflow_dispatch:  
 
 jobs:
   build:
+    name: Build Docker Image
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up QEMU (opcional, para multiplataforma)
+      - name: Set up QEMU (opcional)
         uses: docker/setup-qemu-action@v3
 
       - name: Set up Docker Buildx
@@ -21,6 +24,7 @@ jobs:
         run: docker build -t sergioalves1234/api-filmes:latest .
 
   publish:
+    name: Publish to DockerHub
     needs: build
     runs-on: ubuntu-latest
     steps:
