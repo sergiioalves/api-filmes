@@ -124,6 +124,17 @@ git commit -S -m "feat(api): adiciona rota DELETE /filmes/<id>"
 
 ---
 
+## 🐳 DockerHub
+
+A imagem Docker deste projeto está disponível em:
+
+https://hub.docker.com/r/sergioalves1234/api-filmes
+
+### Badges
+![Docker Image Version](https://badgen.net/docker/versions/sergioalves1234/api-filmes)
+![Docker Image Size](https://badgen.net/docker/size/sergioalves1234/api-filmes/latest)
+
+
 ## 📚 Autor
 
 **Sérgio Alves**  
