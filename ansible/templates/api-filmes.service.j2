@@ -1,0 +1,15 @@
+[Unit]
+Description=API Filmes - Flask service
+After=network.target
+
+[Service]
+User={{ app_user }}
+Group={{ app_user }}
+WorkingDirectory={{ app_dir }}
+Environment="PATH={{ venv_dir }}/bin"
+ExecStart={{ venv_dir }}/bin/gunicorn --workers 3 --bind 0.0.0.0:{{ app_port }} wsgi:app
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

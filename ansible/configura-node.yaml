@@ -1,0 +1,77 @@
+---
+- name: Provisionar servidor e implantar api-filmes
+  hosts: api_servers
+  become: yes
+  vars:
+    app_user: flaskuser
+    app_dir: /home/sergio/api-filmes-app
+    venv_dir: "{{ app_dir }}/venv"
+    repo_url: "https://github.com/sergiioalves/api-filmes.git"
+    repo_version: "main"
+    app_port: 8000
+
+  tasks:
+
+    - name: Atualizar pacotes do sistema
+      apt:
+        update_cache: yes
+
+    - name: Instalar dependências básicas
+      apt:
+        name:
+          - git
+          - python3
+          - python3-venv
+          - python3-pip
+        state: present
+
+    - name: Criar usuário da aplicação
+      user:
+        name: "{{ app_user }}"
+        shell: /bin/bash
+        create_home: yes
+
+    - name: Criar diretório da aplicação
+      file:
+        path: "{{ app_dir }}"
+        state: directory
+        owner: "{{ ansible_user_id }}"
+        group: "{{ ansible_user_id }}"
+        mode: '0755'
+
+    - name: Clonar repositório da API
+      git:
+        repo: "{{ repo_url }}"
+        dest: "{{ app_dir }}"
+        version: "{{ repo_version }}"
+        force: yes
+
+    - name: Criar virtualenv
+      command: python3 -m venv "{{ venv_dir }}"
+      args:
+        creates: "{{ venv_dir }}/bin/activate"
+
+    - name: Instalar dependências da aplicação
+      pip:
+        virtualenv: "{{ venv_dir }}"
+        requirements: "{{ app_dir }}/requirements.txt"
+
+    - name: Instalar Gunicorn
+      pip:
+        virtualenv: "{{ venv_dir }}"
+        name: gunicorn
+
+    - name: Instalar serviço systemd
+      template:
+        src: api-filmes.service.j2
+        dest: /etc/systemd/system/api-filmes.service
+        mode: '0644'
+      when: ansible_system != "Windows"
+
+    - name: Habilitar e iniciar o serviço
+      systemd:
+        daemon_reload: yes
+        name: api-filmes
+        enabled: yes
+        state: restarted
+      when: ansible_system != "Windows"
