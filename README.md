@@ -26,6 +26,7 @@ Faz parte de uma atividade prática sobre **integração contínua (CI/CD)**, bo
 - **Pytest + Pytest-cov**
 - **Flake8**
 - **Git + GitHub Actions**
+- **Docker**
 
 ---
 
@@ -97,12 +98,15 @@ Acesse no navegador:
 ```
 api-filmes/
 ├── app.py
+├── Dockerfile
 ├── requirements.txt
 ├── tests/
 │   └── test_filmes.py
 └── .github/
     └── workflows/
-        └── ci.yml
+        ├── ci.yml
+        └── docker.yml
+
 ```
 
 ---
@@ -135,6 +139,10 @@ git commit -S -m "feat(api): adiciona rota DELETE /filmes/<id>"
 ![Docker Pulls](https://img.shields.io/docker/pulls/sergioalves1234/api-filmes)
 ![Docker Image Size](https://badgen.net/docker/size/sergioalves1234/api-filmes/latest)
 
+
+🔗 Link direto para a imagem no DockerHub
+
+👉 https://hub.docker.com/r/sergioalves1234/api-filmes
 
 ## 📚 Autor
 
